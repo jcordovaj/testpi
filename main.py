@@ -24,7 +24,7 @@ app = FastAPI(
     },
 )
 
-df_movies_recs = df_movies_director = df_movies_actor = df_movies_votos = df_movies_votos = df_movies_score = df_movies_mesydia = df_work = pd.read_excel('dfwork.xlsx', sheet_name='Sheet1', usecols=['title', 'popularity', 'release_date', 'release_year', 'release_month', 
+df_movies_recs = df_movies_director = df_movies_actor = df_movies_votos = df_movies_votos = df_movies_score = df_movies_mesydia = pd.read_excel('dfwork.xlsx', sheet_name='Sheet1', usecols=['title', 'popularity', 'release_date', 'release_year', 'release_month', 
                   'release_day', 'num_dia', 'vote_average', 'vote_count', 'budget', 'revenue', 'return', 'director', 'elenco'])
 
 # Funciones 
