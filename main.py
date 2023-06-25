@@ -4,6 +4,7 @@ from datetime import datetime
 from fastapi import FastAPI
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+import openpyxl
 import joblib
 import ast 
 
