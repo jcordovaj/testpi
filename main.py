@@ -47,7 +47,7 @@ def cantidad_filmaciones_mes(mes: str):
 # Función: PELIS X DÍA
 # ********************
 @app.get("/cantidad_filmaciones_dia/{dia}")
-async def cantidad_filmaciones_dia(dia: str):
+def cantidad_filmaciones_dia(dia: str):
     """
     Recibe : Una cadena de texto con el nombre de un día de la semana
     en idioma español. 
@@ -81,7 +81,7 @@ async def cantidad_filmaciones_dia(dia: str):
 # Función: SCORE PELI
 # *******************
 @app.get("/score_titulo/{titulo}")
-async def score_titulo(titulo: str):
+def score_titulo(titulo: str):
     # Convertir la cadena a tipo título
     v_nom_pel = titulo.title()
     query = df_work['title'] == v_nom_pel
