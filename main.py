@@ -206,7 +206,7 @@ def get_director(nombre_director:str):
     #print(f"El Director {v_nom_dire} ha dirigido {num_title} producciones.")
     #print("La lista de películas, con sus respectivas fechas de lanzamiento, costo, ingresos y utilidad, es la siguiente:")
     
-    lst_nom_cols   = ['Nombre Película', 'Fecha Lanzamiento', 'Costo (USD)', 'Ingresos (USD)', 'Utilidad (USD)']
+    lst_nom_cols   = ['Película', 'Estreno', 'Budget', 'Revenue', 'Profit']
     lst_formateada = []
     for fila in peliculas:
         fila_formateada = [
@@ -220,7 +220,7 @@ def get_director(nombre_director:str):
         lst_formateada.append({"Lista": fila_formateada})
     peliculas = tabulate(lst_formateada, headers=lst_nom_cols, tablefmt="grid")
 
-    return{peliculas}
+    return{"El Director": v_nom_dire,"Lista":peliculas}
 
 # Convertir la lista de valores JSON a una lista de diccionarios
 #data = [json.loads(json.dumps(item)) for item in json_data]
