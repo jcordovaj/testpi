@@ -50,15 +50,7 @@ def cantidad_filmaciones_mes(mes: str):
 def cantidad_filmaciones_dia(dia: str):
   
     """
-    Recibe : Una cadena de texto con el nombre de un día de la semana
-    en idioma español. 
-
-    Retorna:Cantidad de películas que fueron estrenadas el día consultado, 
-    en la totalidad del dataset.
-
-    * Versión Tkinter..."era más elegante"
-    Ejemplo: cantidad_filmaciones_dia('sábado')
-    Retorna: 5159 películas fueron estrenadas un sábado.
+    
     """
     # Diccionario semana
     dic_semana={'lunes':1,'martes':2,'miércoles':3,'jueves':4,'viernes':5,'sábado':6,'domingo':7}
@@ -66,15 +58,23 @@ def cantidad_filmaciones_dia(dia: str):
     # Valida 'v_Dia' y convertir cadena a minúscula
     v_Dia = dia.lower()
 
-    while v_Dia not in dic_semana:
-        v_Dia = input("Ingrese un día de la semana válido: ").lower()
+    #while v_Dia not in dic_semana:
+    #    v_Dia = input("Ingrese un día de la semana válido: ").lower()
 
-    # Guardar valor temporal
+    # Guarda valor temporal
     v_tmp_num = dic_semana[v_Dia]
 
     # Contar películas por día de la semana
-    v_suma_pelis = df_work[df_work['num_dia'] == v_tmp_num]['num_dia'].count()
+    #v_suma_pelis = df_work[df_work['num_dia'] == v_tmp_num]['num_dia'].count()
 
+    # Valida el ingreso de cadenas inválidas 
+    if v_tmp_num is None:
+        raise ValueError('Día ingresado es inválido.')
+
+    # Realizar la consulta en el DataFrame
+    query       = df_work['num_dia'] == v_tmp_num
+    v_num_pelis = len(df_work[query])
+  
     # Retorna cantidad de películas
     return {'Un día': v_Dia, 'se estrenaron': v_suma_pelis}
    
