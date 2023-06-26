@@ -192,21 +192,21 @@ def get_director(nombre_director:str):
         # Crear el diccionario para cada película
         pelicula = {
             'Titulo' : titulo,
-            'Estreno': estreno,
-            'Retorno': retorno,
-            'Budget' : budget,
-            'Profit' : profit
+            'Estreno': str(estreno),
+            'Retorno': str(retorno),
+            'Budget' : str(budget),
+            'Profit' : str(profit)
         }
         peliculas.append(pelicula)
 
-    # Crea estructura del diccionario 
+    # Estructurar diccionario de salida 
     formato = {
-        'Director': nombre_director,
-        'Total revenue': retorno_acumulado,
+        'Director'          : nombre_director,
+        'Total revenue'     : str(retorno_acumulado),
         'Lista de películas': peliculas
     }
 
     # Convertir a formato str, para evitar error en el webservice
-    formato = json.dumps(formato, ensure_ascii=False, indent=4)
+    #formato = json.dumps(formato, ensure_ascii=False, indent=4)
 
     return formato
