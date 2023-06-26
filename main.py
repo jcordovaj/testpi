@@ -88,13 +88,15 @@ def score_titulo(titulo: str):
     """
     # Convertir la cadena a tipo título
     #v_nom_pel = titulo.title()
+    
     query = df_work['title'] == titulo
     movie = df_work.loc[query, ['title', 'release_year', 'popularity']].head(1)
+    
     if not movie.empty:
         titulo       = movie['title'].iloc[0]
         anio_estreno = movie['release_year'].iloc[0]
         score        = movie['popularity'].iloc[0]
-        return {'La película': v_nom_pel, 'fue estrenada': str(anio_estreno), 'con una popularidad de': str(score)}
+        return {'La película': titulo, 'fue estrenada': str(anio_estreno), 'con una popularidad de': str(score)}
     else:
         return {"No se encontró la película": v_nom_pel}
 
@@ -117,7 +119,7 @@ def votos_titulo(titulo: str):
     movie = df_work.loc[query, ['title', 'release_year', 'vote_count', 'vote_average']].head(1)
     if not movie.empty:
         v_titulo       = movie['title'].iloc[0]
-        v_prom_votos    = movie['vote_average'].iloc[0]
+        v_prom_votos   = movie['vote_average'].iloc[0]
         v_qtty_votos   = movie['vote_count'].iloc[0]
         v_anio_estreno = movie['release_year'].iloc[0]
         if v_qtty_votos < 2000:
