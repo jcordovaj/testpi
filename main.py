@@ -37,11 +37,11 @@ def cantidad_filmaciones_mes(mes: str):
     if v_numMes is None:
         raise ValueError('Mes ingresado es inválido.')
 
-    # Realizar la consulta en el DataFrame
+    # Estructurar la consulta
     query       = df_work['release_month'] == v_numMes
     v_num_pelis = len(df_work[query])
 
-    # Imprime el resultado de la consulta
+    # Retorna el resultado de la consulta
     return {'Mes consultado': mes, 'Estrenos totales': v_num_pelis}
 
 # Función: PELIS X DÍA
@@ -58,20 +58,14 @@ def cantidad_filmaciones_dia(dia: str):
     # Valida 'v_Dia' y convertir cadena a minúscula
     v_Dia = dia.lower()
 
-    #while v_Dia not in dic_semana:
-    #    v_Dia = input("Ingrese un día de la semana válido: ").lower()
-
     # Guarda valor temporal
     v_tmp_num = dic_semana[v_Dia]
-
-    # Contar películas por día de la semana
-    #v_suma_pelis = df_work[df_work['num_dia'] == v_tmp_num]['num_dia'].count()
 
     # Valida el ingreso de cadenas inválidas 
     if v_tmp_num is None:
         raise ValueError('Día ingresado es inválido.')
 
-    # Realizar la consulta en el DataFrame
+    # Estructurar la consulta
     query       = df_work['num_dia'] == v_tmp_num
     v_num_pelis = len(df_work[query])
   
@@ -114,7 +108,7 @@ def votos_titulo(titulo: str):
     ergo, no se devuelve ningun valor.
     """
     # Convertir el título a minúsculas
-    #v_titulo = titulo.title()
+    
     query = df_work['title'] == titulo
     movie = df_work.loc[query, ['title', 'release_year', 'vote_count', 'vote_average']].head(1)
     if not movie.empty:
@@ -129,3 +123,44 @@ def votos_titulo(titulo: str):
                     "con un promedio de": str(v_prom_votos)}
     else:
         return {"No se encontró la película": titulo}
+
+
+# Función: EXITO X ACTOR
+# **********************
+@app.get("/get_actor/{nombre_actor}")
+def get_actor(nombre_actor: str):
+    """
+    Función que busca un actor y retorna el número de películas en que
+    ha participado, el acumulado de ingresos y su promedio.
+    
+    Recibe: Una cadena de texto, que es el nombre de un actor.
+    
+    Retorna: Nombre del actor, número de películas en las que participó,
+    el acumulado de ingresos 'revenue' y el promedio ('revenue'/número de películas)
+    
+    Ejemplo: 'El actor X ha participado de Y cantidad de filmaciones, con 
+    un un promedio de Z por filmación'
+    """
+   
+    # Inicializa contador y acumulador
+    
+    v_contador    = 0
+    v_sum_revenue = 0
+        
+    for v_elenco in df_work['elenco']:
+        try:
+            if nombre_actor in v_elenco.split(','):
+                v_contador += 1
+                v_revenue = df_work.loc[df_work['elenco'] == v_elenco, 'revenue'].values[0]
+                v_sum_revenue += v_revenue
+        except AttributeError:
+            pass
+    
+    # Formateo de los valores
+    v_contador_format = '{:,}'.format(v_contador)
+    v_sum_revenue_format = '${:,.2f}'.format(v_sum_revenue)
+    v_prom_revenue = '${:,.2f}'.format(v_sum_revenue / v_contador)
+    
+    # Retorna resultado
+    return {'El actor': nombre_actor, 'N° de pelis en que ha participado': str(v_contador_format), 'Con un retorno total de': str(v_sum_revenue_format),
+            'Su retorno promedio es': str(v_prom_revenue)}
