@@ -94,7 +94,7 @@ def score_titulo(titulo: str):
         titulo       = movie['title'].iloc[0]
         anio_estreno = movie['release_year'].iloc[0]
         score        = movie['popularity'].iloc[0]
-        return {'La película': v_nom_pel, 'fue estrenada': anio_estreno, 'con una popularidad de': score}
+        return {'La película': v_nom_pel, 'fue estrenada': str(anio_estreno), 'con una popularidad de': str(score)}
     else:
         return {"No se encontró la película": v_nom_pel}
 
@@ -123,7 +123,7 @@ def votos_titulo(titulo: str):
         if v_qtty_votos < 2000:
             return {"Puntaje insuficiente!!"}
         else:
-            return {"La película": titulo, "fue estrenada en el año": v_anio_estreno, " sus votos totales son": v_qtty_votos,
-                    "con un promedio de": v_prom_votos}
+            return {"La película": titulo, "fue estrenada en el año": str(v_anio_estreno), " sus votos totales son": str(v_qtty_votos),
+                    "con un promedio de": str(v_prom_votos)}
     else:
         return {"No se encontró la película": titulo}
