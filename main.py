@@ -171,70 +171,42 @@ def get_actor(nombre_actor: str):
 @app.get("/get_director/{nombre_director}")                               
 def get_director(nombre_director:str):
     """  
-       Función de consulta que retorna el número de películas que un director ha dirigido y su éxito, 
-       medido como la suma de ingresos (revenue) de las películas, siempre que exista esa información.
- 
-       La función busca la cadena de texto dentro del campo 'director'.
-
-       Recibe: Una cadena de texto, nombre del director. No valida variantes del nombre, ni su grafía,
-       es decir, si encuentra una cadena igual, retornará los valores de la columna 'revenue', fecha 
-       de lanzamiento, costos ('budget') y ganancia generada ('revenue' menos 'budget').
-
-       Retorna: La cantidad de producciones, fechas de lanzamiento, costo, ingresos y utilidad.
-    """
-
-    # Inicializa variables 
-    num_title   = 0
-    peliculas   = []
-
-    # Recorre el df y busca coincidencias de la cadena en la columna 'director' 
-    for i in range(len(df_work)):
-        director = df_work.loc[i, 'director']
-        if isinstance(director, str) and nombre_director in director.split(','):
-            num_title   += 1
-            title        = df_work.loc[i, 'title']
-            release_date = df_work.loc[i, 'release_date']
-            budget       = df_work.loc[i, 'budget']
-            revenue      = df_work.loc[i, 'revenue']
-            utilidad     = revenue - budget
-            peliculas.append((title, release_date, budget, revenue, utilidad))
-  
-    #return {'director':v_nom_dire, 'retorno_total_director':respuesta, 
-    #'peliculas':respuesta, 'anio':respuesta,, 'retorno_pelicula':respuesta, 
-    #'budget_pelicula':respuesta, 'revenue_pelicula':respuesta}
-  
-    #print(f"El Director {v_nom_dire} ha dirigido {num_title} producciones.")
-    #print("La lista de películas, con sus respectivas fechas de lanzamiento, costo, ingresos y utilidad, es la siguiente:")
     
-    lst_nom_cols   = ['Película', 'Estreno', 'Budget', 'Revenue', 'Profit']
-    lst_formateada = []
-    for fila in peliculas:
-        fila_formateada = [
-            fila[0],
-            datetime.strptime(str(fila[1]), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d"),
-            "${:.2f}".format(fila[2]),
-            "${:.2f}".format(fila[3]),
-            "${:.2f}".format(fila[4])
-        ]
-        #lst_formateada.append({"El Director": v_nom_dire, "Lista": fila_formateada})
-        lst_formateada.append({"Lista": fila_formateada})
-    peliculas = tabulate(lst_formateada, headers=lst_nom_cols, tablefmt="grid")
+    """
+    # Filtra filas que coinciden con la cadena ingresada
+    # Crea un subconjunto del df, sólo con las cols de la consulta.
+    tmp_data = df_work[df_work['director'] == nombre_director]
 
-    return{"El Director": v_nom_dire,"Lista":peliculas}
+    # Calcular el retorno acumulado
+    retorno_acumulado = tmp_data['revenue'].sum()
 
-# Convertir la lista de valores JSON a una lista de diccionarios
-#data = [json.loads(json.dumps(item)) for item in json_data]
+    # Crear la lista de películas para el Director ingresado
+    peliculas = []
+    for index, row in tmp_data.iterrows():
+        titulo  = row['title']
+        estreno = row['release_year']
+        retorno = row['revenue']
+        budget  = row['budget']
+        profit  = row['revenue'] - row['budget']
 
-# Obtener las claves (encabezados de columna)
-#headers = data[0].keys()
+        # Crear el diccionario para cada película
+        pelicula = {
+            'Titulo' : titulo,
+            'Estreno': estreno,
+            'Retorno': retorno,
+            'Budget' : budget,
+            'Profit' : profit
+        }
+        peliculas.append(pelicula)
 
-# Obtener los valores (filas)
-#rows = [list(item.values()) for item in data]
+    # Crea estructura del diccionario 
+    formato = {
+        'Director': nombre_director,
+        'Total revenue': retorno_acumulado,
+        'Lista de películas': peliculas
+    }
 
-# Mostrar la lista en formato tabular
-#print(tabulate(rows, headers=headers))
+    # Convertir a formato str, para evitar error en el webservice
+    formato = json.dumps(formato, ensure_ascii=False, indent=4)
 
-
-
-
-
+    return formato
