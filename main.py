@@ -49,7 +49,7 @@ def cantidad_filmaciones_mes(mes: str):
 @app.get("/cantidad_filmaciones_dia/{dia}")
 def cantidad_filmaciones_dia(dia: str):
   
-  """
+    """
     Recibe : Una cadena de texto con el nombre de un día de la semana
     en idioma español. 
 
