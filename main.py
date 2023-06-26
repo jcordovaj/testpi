@@ -87,8 +87,8 @@ def score_titulo(titulo: str):
 
     """
     # Convertir la cadena a tipo título
-    v_nom_pel = titulo.title()
-    query = df_work['title'] == v_nom_pel
+    #v_nom_pel = titulo.title()
+    query = df_work['title'] == titulo
     movie = df_work.loc[query, ['title', 'release_year', 'popularity']].head(1)
     if not movie.empty:
         titulo       = movie['title'].iloc[0]
