@@ -97,3 +97,33 @@ def score_titulo(titulo: str):
         return {'La película': v_nom_pel, 'fue estrenada': anio_estreno, 'con una popularidad de': score}
     else:
         return {"No se encontró la película": v_nom_pel}
+
+
+# Función: VOTOS X PELI
+# *********************
+@app.get("/votos_titulo/{titulo}")
+def votos_titulo(titulo: str):
+    """ 
+    Se ingresa el título de una filmación esperando como respuesta el título, 
+    la cantidad de votos y el valor promedio de las votaciones. 
+    
+    La misma variable deberá de contar con al menos 2000 valoraciones, caso 
+    contrario, debemos contar con un mensaje avisando que no cumple esta condición, 
+    ergo, no se devuelve ningun valor.
+    """
+    # Convertir el título a minúsculas
+    v_titulo = titulo.title()
+    query = df_work['title'] == v_titulo
+    movie = df_work.loc[query, ['title', 'release_year', 'vote_count', 'vote_average']].head(1)
+    if not movie.empty:
+        v_titulo       = movie['title'].iloc[0]
+        v_med_votos    = movie['vote_average'].iloc[0]
+        v_qtty_votos   = movie['vote_count'].iloc[0]
+        v_anio_estreno = movie['release_year'].iloc[0]
+        if v_qtty_votos < 2000:
+            return {"Puntaje insuficiente!!"}
+        else:
+            return {"La película": v_titulo, "fue estrenada en el año": v_anio_estreno, " sus votos totales son": v_qtty_votos,
+                    "con un promedio de": v_med_votos}
+    else:
+        return {"No se encontró la película": v_titulo}
