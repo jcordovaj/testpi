@@ -169,7 +169,7 @@ def get_actor(nombre_actor: str):
 # Función: EXITO X DIRECTOR
 # *************************
 @app.get("/get_director/{nombre_director}")                               
-async def get_director(nombre_director:str):
+def get_director(nombre_director:str):
     """  
        Función de consulta que retorna el número de películas que un director ha dirigido y su éxito, 
        medido como la suma de ingresos (revenue) de las películas, siempre que exista esa información.
@@ -183,8 +183,7 @@ async def get_director(nombre_director:str):
        Retorna: La cantidad de producciones, fechas de lanzamiento, costo, ingresos y utilidad.
     """
 
-    # Inicializa varibles 
-    #v_nom_dire = nombre_director.title()
+    # Inicializa variables 
     num_title   = 0
     peliculas   = []
 
@@ -192,14 +191,13 @@ async def get_director(nombre_director:str):
     for i in range(len(df_work)):
         director = df_work.loc[i, 'director']
         if isinstance(director, str) and nombre_director in director.split(','):
-            num_title += 1
-            title = df_work.loc[i, 'title']
+            num_title   += 1
+            title        = df_work.loc[i, 'title']
             release_date = df_work.loc[i, 'release_date']
-            budget = df_work.loc[i, 'budget']
-            revenue = df_work.loc[i, 'revenue']
-            utilidad = revenue - budget
+            budget       = df_work.loc[i, 'budget']
+            revenue      = df_work.loc[i, 'revenue']
+            utilidad     = revenue - budget
             peliculas.append((title, release_date, budget, revenue, utilidad))
-
   
     #return {'director':v_nom_dire, 'retorno_total_director':respuesta, 
     #'peliculas':respuesta, 'anio':respuesta,, 'retorno_pelicula':respuesta, 
@@ -207,9 +205,9 @@ async def get_director(nombre_director:str):
   
     #print(f"El Director {v_nom_dire} ha dirigido {num_title} producciones.")
     #print("La lista de películas, con sus respectivas fechas de lanzamiento, costo, ingresos y utilidad, es la siguiente:")
+    
     lst_nom_cols   = ['Nombre Película', 'Fecha Lanzamiento', 'Costo (USD)', 'Ingresos (USD)', 'Utilidad (USD)']
     lst_formateada = []
-
     for fila in peliculas:
         fila_formateada = [
             fila[0],
@@ -218,8 +216,25 @@ async def get_director(nombre_director:str):
             "${:.2f}".format(fila[3]),
             "${:.2f}".format(fila[4])
         ]
-        lst_formateada.append({"El Director": v_nom_dire, "Lista": fila_formateada})
-
+        #lst_formateada.append({"El Director": v_nom_dire, "Lista": fila_formateada})
+        lst_formateada.append({"Lista": fila_formateada})
     peliculas = tabulate(lst_formateada, headers=lst_nom_cols, tablefmt="grid")
 
     return{peliculas}
+
+# Convertir la lista de valores JSON a una lista de diccionarios
+#data = [json.loads(json.dumps(item)) for item in json_data]
+
+# Obtener las claves (encabezados de columna)
+#headers = data[0].keys()
+
+# Obtener los valores (filas)
+#rows = [list(item.values()) for item in data]
+
+# Mostrar la lista en formato tabular
+#print(tabulate(rows, headers=headers))
+
+
+
+
+
