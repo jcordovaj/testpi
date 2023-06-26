@@ -76,7 +76,7 @@ def cantidad_filmaciones_dia(dia: str):
     v_num_pelis = len(df_work[query])
   
     # Retorna cantidad de películas
-    return {'Un día': v_Dia, 'se estrenaron': v_suma_pelis}
+    return {'Un día': v_Dia, 'se estrenaron': v_num_pelis}
    
   
 # Función: SCORE PELI
