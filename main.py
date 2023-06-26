@@ -76,3 +76,20 @@ async def cantidad_filmaciones_dia(dia: str):
 
     # Retorna cantidad de películas
     return {'Un día': v_Dia, 'se estrenaron': v_suma_pelis}
+
+
+# Función: SCORE PELI
+# *******************
+@app.get("/score_titulo/{titulo}")
+async def score_titulo(titulo: str):
+    # Convertir la cadena a tipo título
+    v_nom_pel = titulo.title()
+    query = df_work['title'] == v_nom_pel
+    movie = df_work.loc[query, ['title', 'release_year', 'popularity']].head(1)
+    if not movie.empty:
+        titulo = movie['title'].iloc[0]
+        anio_estreno = movie['release_year'].iloc[0]
+        score = movie['popularity'].iloc[0]
+        return {'La película': v_nom_pel, 'fue estrenada': anio_estreno, 'con una popularidad de': score}
+    else:
+        return {"No se encontró la película": v_nom_pel}
