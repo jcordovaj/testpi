@@ -332,7 +332,7 @@ def recomendacion(nombre_pelicula:str):
         lst_srp.append(pelis)
         
     # Arma diccionario con la salida 
-    srp = {
+    #srp = {
     #"Las películas recomendadas son:" : (""),
     #" "                               : (lst_srp)
     #      }
