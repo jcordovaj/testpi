@@ -8,8 +8,8 @@ import openpyxl
 
 app = FastAPI()
 
-df_work = pd.read_excel('dfwork.xlsx', sheet_name='Sheet1', usecols=['title', 'popularity', 'release_date', 'release_year', 'release_month', 
-                  'release_day', 'num_dia', 'vote_average', 'vote_count', 'budget', 'revenue', 'return', 'director', 'elenco'])
+df_work = pd.read_excel('dfwork.xlsx', sheet_name='Sheet1', usecols=['id', 'title', 'popularity', 'release_year', 'release_month', 
+                  'release_day', 'release_weekday', 'vote_average', 'vote_count', 'budget', 'revenue', 'return', 'director', 'elenco', 'generos'])
 
 # Función: Root
 # ********************
@@ -80,7 +80,7 @@ def cantidad_filmaciones_dia(dia: str):
         raise ValueError('Día ingresado es inválido.')
 
     # Estructurar la consulta
-    query       = df_work['num_dia'] == v_tmp_num
+    query       = df_work['release_weekday'] == v_tmp_num
     v_num_pelis = len(df_work[query])
   
     # Retorna cantidad de películas
