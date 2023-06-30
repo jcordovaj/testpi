@@ -333,10 +333,12 @@ def recomendacion(nombre_pelicula:str):
         
     # Arma diccionario con la salida 
     srp = {
-    "Las películas recomendadas son:" : (""),
-    " "                               : (lst_srp)
+    #"Las películas recomendadas son:" : (""),
+    #" "                               : (lst_srp)
+    #      }
+    srp = {
+        "Las películas recomendadas son:": lst_srp
           }
-    
     return srp 
 
 
