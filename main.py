@@ -8,8 +8,8 @@ import openpyxl
 
 app = FastAPI()
 
-df_work = pd.read_excel('dfwork.xlsx', sheet_name='Sheet1', usecols=['title', 'popularity', 'release_date', 'release_year', 'release_month', 
-                  'release_day', 'num_dia', 'vote_average', 'vote_count', 'budget', 'revenue', 'return', 'director', 'elenco'])
+df_work = pd.read_excel('dfwork.xlsx', sheet_name='Sheet1', usecols=['id', 'title', 'popularity', 'release_year', 'release_month', 
+                  'release_day', 'release_weekday', 'vote_average', 'vote_count', 'budget', 'revenue', 'return', 'director', 'elenco', 'generos'])
 
 # Función: Root
 # ********************
@@ -80,7 +80,7 @@ def cantidad_filmaciones_dia(dia: str):
         raise ValueError('Día ingresado es inválido.')
 
     # Estructurar la consulta
-    query       = df_work['num_dia'] == v_tmp_num
+    query       = df_work['release_weekday'] == v_tmp_num
     v_num_pelis = len(df_work[query])
   
     # Retorna cantidad de películas
@@ -281,46 +281,65 @@ def recomendacion(nombre_pelicula:str):
         
     """
     # Verificar si la película está en la columna 'title'
-    if nombre_pelicula not in df['title'].values:
+    if nombre_pelicula not in df_work['title'].values:
         srp = 'La película no está en el dataframe.'
         return srp
 
-    # Obtener el registro coincidente
-    movie_row = df[df['title'] == nombre_pelicula].iloc[0]
+    # Obtener registro coincidente
+    movie_row = df_work[df_work['title'] == nombre_pelicula].iloc[0]
 
-    # Extraer los valores necesarios del registro
+    # Extraer que nos sirven del registro
+    id         = movie_row['id']
     title      = movie_row['title']
     generos    = movie_row['generos']
     popularity = movie_row['popularity']
 
-    # Crear variables temporales para cada elemento en la lista 'generos'
+    # Crear variables temporales por cada elemento dentro de la variable 'generos'
+    # Crea una variable por cada genero en la lista
+    # Luego busca pelis con los mismos generos y los ordena por coincidencias, donde
+    # 3 coincidencias es mayor que dos coincidencias y 2 es mayor que 1 coincidencia
+
     generos_list         = generos.split(', ')
-    n = len(generos_list)
+    n                    = len(generos_list)
+    
     variables_temporales = ['x{}'.format(i) for i in range(1, n + 1)]
     for i in range(n):
         exec("{} = '{}'".format(variables_temporales[i], generos_list[i]))
 
-    # Filtrar películas con coincidencias en los géneros y ordenar por popularidad
-    filtered_movies = df[df['generos'].apply(lambda x: all(g in x for g in generos_list))].sort_values(by='popularity', ascending=False)
+    # Filtra películas con coincidencias en los géneros y luego las reclasifica por popularidad
+    matriz_resultados = df_work[df_work['generos'].apply(lambda x: all(g in x for g in generos_list))].sort_values(by='popularity', ascending=False)
 
-    # Eliminar la película de entrada de las recomendaciones
-    filtered_movies = filtered_movies[filtered_movies['title'] != nombre_pelicula]
+    # Elimina la película ingresada como variable de la lista de recomendaciones
+    matriz_resultados = matriz_resultados[matriz_resultados['title'] != nombre_pelicula]
 
-    # Obtener las primeras 5 películas recomendadas
-    recommended_movies = filtered_movies.head(5)
+    # Obtiene las primeras 5 películas recomendadas
+    pelis_recomendadas = matriz_resultados.head(5)
 
-    # Crear la lista de películas recomendadas con su popularidad
-    recommendations = []
-    for i, row in recommended_movies.iterrows():
-        recommendations.append("{}. {} y su popularidad es {}".format(i+1, row['title'], row['popularity']))
-
-    # Estructura la respuesta y guarda en 'srp'
+    # Crear lista de películas recomendadas con su popularidad
     srp  = ""
-    srp += "Las películas recomendadas son:\n"
-    for recommendation in recommendations:
-        srp += recommendation + ",\n"
-
-    return srp
+   
+    # Crea lista con pelis recomendadas
+    lst_srp = []
+    for i, row in pelis_recomendadas.iterrows():
+        id_pel      = row['id']
+        titulo      = row['title']
+        popularidad = row['popularity']
+        
+        # Crear el diccionario para cada película
+        pelis = {
+            'Id'          : str(id_pel),
+            'Titulo'      : (titulo),
+            'Popularidad' : str(popularidad)
+                }
+    lst_srp.append(pelis)
+        
+    # Arma un diccionario con la salida 
+    srp = {
+    "Las películas recomendadas son:" : (""),
+    " "                               : (lst_srp)
+          }
+    
+    return srp 
 
 
 
