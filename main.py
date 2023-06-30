@@ -22,7 +22,16 @@ def get_root():
 @app.get("/cantidad_filmaciones_mes/{mes}")
 def cantidad_filmaciones_mes(mes: str):
     """
+    Recibe: una cadena de texto con el nombre del mes
+    en idioma español.
     
+    No valida el idioma, sólo que pertenezca al 
+    diccionario.
+    
+    Si la cadena es inválida, solicitará
+    otra cadena válida.
+    
+    Retorna: La cantidad de películas estrenadas en el mes 'X'
     """
     # Crear diccionario con los nombres de los meses y su valor numérico
     # Mapea la cadena ingresada y si pertenece, la convierte a su valor numérico
@@ -50,7 +59,12 @@ def cantidad_filmaciones_mes(mes: str):
 def cantidad_filmaciones_dia(dia: str):
   
     """
+    Recibe : Una cadena de texto con el nombre de un día.
     
+    Retorna: La suma de películas estrenadas en ese mismo día.
+    
+    Ejemplo: cantidad_filmaciones_dia/lunes 
+             "XXXX películas fueron estrenadas un lunes".
     """
     # Diccionario semana
     dic_semana={'lunes':1,'martes':2,'miércoles':3,'jueves':4,'viernes':5,'sábado':6,'domingo':7}
@@ -78,11 +92,18 @@ def cantidad_filmaciones_dia(dia: str):
 @app.get("/score_titulo/{titulo}")
 def score_titulo(titulo: str):
     """
+    Función de consulta que recibe e nombre de una película
+    y muestra su score de popularidad.
 
-    """
-    # Convertir la cadena a tipo título
-    #v_nom_pel = titulo.title()
+    Recibe: Una cadena de texto 'titulo'. Si la cadena no
+    no se encuentra o está mal escrita, genera un mensaje
+    de advertencia ('No se encontró la película').
+
+    Retorna: Una frase, con el título de la peli, año de estreno,
+    y su popularidad.
     
+    "La película': titulo, 'fue estrenada': str(anio_estreno), 'con una popularidad de': str(score)
+    """    
     query = df_work['title'] == titulo
     movie = df_work.loc[query, ['title', 'release_year', 'popularity']].head(1)
     
@@ -106,9 +127,13 @@ def votos_titulo(titulo: str):
     La misma variable deberá de contar con al menos 2000 valoraciones, caso 
     contrario, debemos contar con un mensaje avisando que no cumple esta condición, 
     ergo, no se devuelve ningun valor.
-    """
-    # Convertir el título a minúsculas
+
+    Recibe  : Una cadena de texto, valida si está en la BBDD.
+
+    Retorna : Si la película tiene más de 2000 votos, su título, año de estreno, votos, y promedio
+    de votos. Si tiene menos de 2000 votos, un mensaje "Puntaje insuficiente!!"
     
+    """
     query = df_work['title'] == titulo
     movie = df_work.loc[query, ['title', 'release_year', 'vote_count', 'vote_average']].head(1)
     if not movie.empty:
@@ -150,16 +175,16 @@ def get_actor(nombre_actor: str):
     for v_elenco in df_work['elenco']:
         try:
             if nombre_actor in v_elenco.split(','):
-                v_contador += 1
-                v_revenue = df_work.loc[df_work['elenco'] == v_elenco, 'revenue'].values[0]
+                v_contador    += 1
+                v_revenue      = df_work.loc[df_work['elenco'] == v_elenco, 'revenue'].values[0]
                 v_sum_revenue += v_revenue
         except AttributeError:
             pass
     
     # Formateo de los valores
-    v_contador_format = '{:,}'.format(v_contador)
+    v_contador_format    = '{:,}'.format(v_contador)
     v_sum_revenue_format = '${:,.2f}'.format(v_sum_revenue)
-    v_prom_revenue = '${:,.2f}'.format(v_sum_revenue / v_contador)
+    v_prom_revenue       = '${:,.2f}'.format(v_sum_revenue / v_contador)
     
     # Retorna resultado
     return {'El actor': nombre_actor, 'N° de pelis en que ha participado': str(v_contador_format), 'Con un retorno total de': str(v_sum_revenue_format),
@@ -171,7 +196,15 @@ def get_actor(nombre_actor: str):
 @app.get("/get_director/{nombre_director}")                               
 def get_director(nombre_director:str):
     """  
+    Función de consulta.
     
+    Recibe  : Cadena de texto que el nombre de un director de cine.
+    
+    No valida grafía, si la cadena coincide, realiza la búsqueda.
+    
+    Retorna : Nombre del director, las películas dirigidas, luego
+    genera una lista con el nombre de cada película, año de lanzamiento,
+    presupuesto, ingresos y utilidad.
     """
     # Filtra filas que coinciden con la cadena ingresada
     # Crea un subconjunto del df, sólo con las cols de la consulta.
@@ -206,32 +239,32 @@ def get_director(nombre_director:str):
         'Lista de películas': peliculas
     }
 
-    # Convertir a formato str, para evitar error en el webservice
-    #formato = json.dumps(formato, ensure_ascii=False, indent=4)
-
     return formato
 
 
-# Función: MOTOR RECOMENDADOR PELIS
-# *********************************
+# Función: MOTOR RECOMENDADOR PELIS SRP
+# *************************************
 @app.get("/recomendacion/{nombre_pelicula}")                               
 def recomendacion(nombre_pelicula:str):
     """  
-    Función que genera una recomendación basada en la coincidencia
+    Función que genera una recomendación basada en la coincidencia 
     con los géneros y la popularidad.
 
     Se ingresa un título, se identifican los géneros en que fue clasificada,
-    luego ordena la películas que tengan las mismas clasificaciones y genera
-    una lista que se vuelve a ordenar por popularidad.
+    luego busca y ordena la películas que tengan las mismas clasificaciones, 
+    supone que son parecidas y genera una lista que se reclasifica por 
+    popularidad.
 
     Resulta en una recomendación basada en dos factores.
 
     Se puede ir agregando otros factores, como votación y crítica de cine, 
     permitiendo ajustarse a restricciones del lado servidor, en este caso RENDER, 
-    que soporta 512MB y un procesamiento limitado.
+    que soporta 512MB y un procesamiento limitado, lo que generaba problemas por
+    el tamaño de la base y luego, con el procesamiento de los algoritmos de ML.
 
     Luego de muchas pruebas con sklearn y cosine_similarity, que desbordaban las
-    capacidades dadas como restricción, reduje la carga y la velocidad de respuesta.
+    capacidades dadas como restricción, reduje la carga y la velocidad de respuesta,
+    proveyendo una solución funcional y performante.
     
     Recibe: Una cadena de texto, si no halla un nombre coincidente retorna un mensaje
     'La película está mal escrita o no está en la BBDD.'
@@ -247,48 +280,47 @@ def recomendacion(nombre_pelicula:str):
     25494. Kingsman: The Secret Service y su popularidad es 28.224212
         
     """
-    # Verifica si la película existe en nuestra BBDD ('title')
-    if nombre_pelicula not in df_work['title'].values:
-        print('La película está mal escrita o no está en la BBDD.')
-        return None
+    # Verificar si la película está en la columna 'title'
+    if nombre_pelicula not in df['title'].values:
+        srp = 'La película no está en el dataframe.'
+        return srp
 
     # Obtener el registro coincidente
     movie_row = df[df['title'] == nombre_pelicula].iloc[0]
 
     # Extraer los valores necesarios del registro
-    # Aqui se pueden agregar más factores, incluso ponderadores
-    # y generar un modelo mucho más complejo, hoy es MVP
-    
     title      = movie_row['title']
     generos    = movie_row['generos']
     popularity = movie_row['popularity']
 
-    # Crea variables temporales para cada elemento en la lista 'generos'
+    # Crear variables temporales para cada elemento en la lista 'generos'
     generos_list         = generos.split(', ')
-    n                    = len(generos_list)
+    n = len(generos_list)
     variables_temporales = ['x{}'.format(i) for i in range(1, n + 1)]
-    # Crea tantas variables como elementos hay en el campo 'generos'
     for i in range(n):
         exec("{} = '{}'".format(variables_temporales[i], generos_list[i]))
 
-    # Filtra películas con coincidencias en los géneros y luego, las ordena por su popularidad
+    # Filtrar películas con coincidencias en los géneros y ordenar por popularidad
     filtered_movies = df[df['generos'].apply(lambda x: all(g in x for g in generos_list))].sort_values(by='popularity', ascending=False)
 
-    # Elimina la película de entrada de las recomendaciones
+    # Eliminar la película de entrada de las recomendaciones
     filtered_movies = filtered_movies[filtered_movies['title'] != nombre_pelicula]
 
-    # Filtra las primeras 5 películas recomendadas
+    # Obtener las primeras 5 películas recomendadas
     recommended_movies = filtered_movies.head(5)
 
-    # Crea una lista con las películas recomendadas
-    tu_lista = []
+    # Crear la lista de películas recomendadas con su popularidad
+    recommendations = []
     for i, row in recommended_movies.iterrows():
-        tu_lista.append("{}. {} y su popularidad es {}".format(i+1, row['title'], row['popularity']))
+        recommendations.append("{}. {} y su popularidad es {}".format(i+1, row['title'], row['popularity']))
 
-    # Mostrar las películas recomendadas como una lista apilada
-    print("Las películas recomendadas son:")
-    for peli in tu_lista:
-        print(peli)
+    # Estructura la respuesta y guarda en 'srp'
+    srp  = ""
+    srp += "Las películas recomendadas son:\n"
+    for recommendation in recommendations:
+        srp += recommendation + ",\n"
+
+    return srp
 
 
 
