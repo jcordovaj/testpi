@@ -210,3 +210,85 @@ def get_director(nombre_director:str):
     #formato = json.dumps(formato, ensure_ascii=False, indent=4)
 
     return formato
+
+
+# Función: MOTOR RECOMENDADOR PELIS
+# *********************************
+@app.get("/recomendacion/{nombre_pelicula}")                               
+def recomendacion(nombre_pelicula:str):
+    """  
+    Función que genera una recomendación basada en la coincidencia
+    con los géneros y la popularidad.
+
+    Se ingresa un título, se identifican los géneros en que fue clasificada,
+    luego ordena la películas que tengan las mismas clasificaciones y genera
+    una lista que se vuelve a ordenar por popularidad.
+
+    Resulta en una recomendación basada en dos factores.
+
+    Se puede ir agregando otros factores, como votación y crítica de cine, 
+    permitiendo ajustarse a restricciones del lado servidor, en este caso RENDER, 
+    que soporta 512MB y un procesamiento limitado.
+
+    Luego de muchas pruebas con sklearn y cosine_similarity, que desbordaban las
+    capacidades dadas como restricción, reduje la carga y la velocidad de respuesta.
+    
+    Recibe: Una cadena de texto, si no halla un nombre coincidente retorna un mensaje
+    'La película está mal escrita o no está en la BBDD.'
+    
+    Retorna: Una lista con: el n° de id en la BBDD, el nombre y la popularidad
+    
+    Ejemplo:
+    Las películas recomendadas son:
+    26526. Guardians of the Galaxy Vol. 2 y su popularidad es 185.330992
+    26525. Thor: Ragnarok y su popularidad es 57.283628
+    23717. Guardians of the Galaxy y su popularidad es 53.291601
+    38778. Now You See Me 2 y su popularidad es 39.540653
+    25494. Kingsman: The Secret Service y su popularidad es 28.224212
+        
+    """
+    # Verifica si la película existe en nuestra BBDD ('title')
+    if nombre_pelicula not in df_work['title'].values:
+        print('La película está mal escrita o no está en la BBDD.')
+        return None
+
+    # Obtener el registro coincidente
+    movie_row = df[df['title'] == nombre_pelicula].iloc[0]
+
+    # Extraer los valores necesarios del registro
+    # Aqui se pueden agregar más factores, incluso ponderadores
+    # y generar un modelo mucho más complejo, hoy es MVP
+    
+    title      = movie_row['title']
+    generos    = movie_row['generos']
+    popularity = movie_row['popularity']
+
+    # Crea variables temporales para cada elemento en la lista 'generos'
+    generos_list         = generos.split(', ')
+    n                    = len(generos_list)
+    variables_temporales = ['x{}'.format(i) for i in range(1, n + 1)]
+    # Crea tantas variables como elementos hay en el campo 'generos'
+    for i in range(n):
+        exec("{} = '{}'".format(variables_temporales[i], generos_list[i]))
+
+    # Filtra películas con coincidencias en los géneros y luego, las ordena por su popularidad
+    filtered_movies = df[df['generos'].apply(lambda x: all(g in x for g in generos_list))].sort_values(by='popularity', ascending=False)
+
+    # Elimina la película de entrada de las recomendaciones
+    filtered_movies = filtered_movies[filtered_movies['title'] != nombre_pelicula]
+
+    # Filtra las primeras 5 películas recomendadas
+    recommended_movies = filtered_movies.head(5)
+
+    # Crea una lista con las películas recomendadas
+    tu_lista = []
+    for i, row in recommended_movies.iterrows():
+        tu_lista.append("{}. {} y su popularidad es {}".format(i+1, row['title'], row['popularity']))
+
+    # Mostrar las películas recomendadas como una lista apilada
+    print("Las películas recomendadas son:")
+    for peli in tu_lista:
+        print(peli)
+
+
+
