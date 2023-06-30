@@ -329,7 +329,7 @@ def recomendacion(nombre_pelicula:str):
             'Titulo'      : (titulo),
             'Popularidad' : str(popularidad)
                 }
-    lst_srp.append(pelis)
+        lst_srp.append(pelis)
         
     # Arma diccionario con la salida 
     srp = {
