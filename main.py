@@ -315,10 +315,8 @@ def recomendacion(nombre_pelicula:str):
     # Obtiene las primeras 5 películas recomendadas
     pelis_recomendadas = matriz_resultados.head(5)
 
-    # Crear lista de películas recomendadas con su popularidad
+    # Crear lista con pelis recomendadas
     srp  = ""
-   
-    # Crea lista con pelis recomendadas
     lst_srp = []
     for i, row in pelis_recomendadas.iterrows():
         id_pel      = row['id']
@@ -333,7 +331,7 @@ def recomendacion(nombre_pelicula:str):
                 }
     lst_srp.append(pelis)
         
-    # Arma un diccionario con la salida 
+    # Arma diccionario con la salida 
     srp = {
     "Las películas recomendadas son:" : (""),
     " "                               : (lst_srp)
