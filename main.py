@@ -15,7 +15,7 @@ df_work = pd.read_excel('dfwork.xlsx', sheet_name='Sheet1', usecols=['id', 'titl
 # ********************
 @app.get('/') #ruta raíz
 def get_root():
-    return 'API para consulta de datos de películas'
+    return 'Sistema de Recomendación de Películas - SRP, API de consulta sobre datos de películas'
 
 # Función: PELIS X MES
 # ********************
@@ -332,10 +332,6 @@ def recomendacion(nombre_pelicula:str):
         lst_srp.append(pelis)
         
     # Arma diccionario con la salida 
-    #srp = {
-    #"Las películas recomendadas son:" : (""),
-    #" "                               : (lst_srp)
-    #      }
     srp = {
         "Las películas recomendadas son:": lst_srp
           }
