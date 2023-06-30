@@ -4,6 +4,12 @@
 
 ![1687323920735](image/README/1687323920735.png)
 
+[Link del video](https://drive.google.com/file/d/1PgzsYgdVSkfpbMUO9gf6_rO2LZsawJ0B/view?usp=sharing)
+
+[Link de la API en Render](https://srptest.onrender.com)
+
+[Link del Repo](https://github.com/jcordovaj/testpi/tree/main)
+
 ## Brief del Proyecto: Industria de la Entretención y el Cine
 
 La industria de la entretención es un amplio y diverso eje de la economía mundial, toda vez que, al igual que en la génesis de la sociedad civilizada, un indicador de su desarrollo, es el tiempo libre que las personas pueden comenzar a dedicar a otras actividades, entre ellas, el ocio (como el teatro o artes escénicas y la contemplación), o la filosofía (que posibilitaron el desarrollo de la ciencia y la tecnología), lo que no era factible si estabas dedicado, a tiempo completo, a la recolección, la caza o la autodefensa, cuando la economía era de sobrevivencia.
@@ -20,7 +26,6 @@ Esta industria, comprende varios subsectores, no menos complejos o interesantes,
 * **Eventos en vivo**: Podemos incluir, conciertos, festivales, espectáculos deportivos y otros eventos en vivo.
 
 La industria del entretenimiento genera miles de millones de dólares cada año. Estos ingresos provienen de diversas fuentes, tales como: la venta de entradas, la publicidad, las suscripciones, las ventas de música y películas, memoralia, merchandising, royalties o acuerdos de licencia, entre otros. Es importante tener en cuenta que los ingresos pueden variar significativamente de un año a otro debido a externalidades (pandemia), o a factores como: el éxito de las producciones, popularidad de los actores y la demanda del público.
-
 
 ![1687323981261](image/README/1687323981261.png)
 
@@ -67,6 +72,6 @@ El rol a desempeñar es como **`Data Scientist`** para una start-up que provee s
 
 **Parte 1**: Un **`MVP`** (*Minimum Viable Product*), consistente en un set de datos operacional, 6 funciones de consulta que despliegan datos y su implementación como webservice para ser consumido a través de la red. Se proveerá un proyecto montado en Github conteniendo, las carpetas con los datos originales y datos operativos (rawdata y cleandata), un notebook con la memoria de cálculos y transformaciones, un programa principal (main.py), escrito en Python 3.11, un archivo de 'requirements.txt', carpeta de documentación (readme.pdf, copia de readme.md), carpeta de pruebas. El despliegue se hará usando Render, y se proveerá un link para su consulta en linea.
 
-**Parte 2**: Incluye códigos o scripts '.py' y/o 'Jupyter Notebook .ipynb', el  EDA, feature engineerging.  Para resolver esta parte del Lab, evaluando los problemas que había con la plataforma y performance, y luego de leer muchas soluciones y entender los modelos subyacentes, se hizo un desarrollo propio que recoge esas experiencias. El modelo, utiliza un clasificador que lee los géneros con los que fue categorizada la película, tomando la lista de atributos y los almacena en una matriz de resultados, la que cruza con los valores similares de otras películas de la bbdd, luego ordena las películas que tienen mejor coincidencia y las ordena por popularidad, devolviendo una lista con las mejores 5 opciones, de acuerdo al tipo de película. Este cambio obedece a problemas de procesamiento y espacio en Render. Esta solución MVP, resuelve el problema funcional y técnico, al optimizar los recursos y mejorar la perfomance en la respuesta. El modelo soporta, múltiples factores y ponderadores, con muy pocos cambios a nivel de programación  y permitiría mejorar los resultados, aunque ya son bastante buenos. 
+**Parte 2**: Incluye códigos o scripts '.py' y/o 'Jupyter Notebook .ipynb', el  EDA, feature engineerging.  Para resolver esta parte del Lab, evaluando los problemas que había con la plataforma y performance, y luego de leer muchas soluciones y entender los modelos subyacentes, se hizo un desarrollo propio que recoge esas experiencias. El modelo, utiliza un clasificador que lee los géneros con los que fue categorizada la película, tomando la lista de atributos y los almacena en una matriz de resultados, la que cruza con los valores similares de otras películas de la bbdd, luego ordena las películas que tienen mejor coincidencia y las ordena por popularidad, devolviendo una lista con las mejores 5 opciones, de acuerdo al tipo de película. Este cambio obedece a problemas de procesamiento y espacio en Render. Esta solución MVP, resuelve el problema funcional y técnico, al optimizar los recursos y mejorar la perfomance en la respuesta. El modelo soporta, múltiples factores y ponderadores, con muy pocos cambios a nivel de programación  y permitiría mejorar los resultados, aunque ya son bastante buenos.
 
 En ambos casos se documentará cada paso realizado mediante comentarios en el script o textos en formato markdown dentro del notebook, para su trazabilidad y mantenibilidad acorde a PEP 8.
